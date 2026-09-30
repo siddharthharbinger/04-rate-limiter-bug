@@ -13,9 +13,7 @@ class TokenBucket:
         """Refill tokens based on elapsed time up to bucket capacity."""
         elapsed = (now - self.last_refill).total_seconds()
         if elapsed > 0:
-            # Bug: tokens are accumulated without clamping to self.capacity
-            self.tokens += elapsed * self.refill_rate_per_sec
-            self.last_refill = now
+            self.tokens = min(self.capacity, self.tokens + elapsed * self.refill_rate_per_sec)
 
     def allow_request(self, tokens_needed: float, now: datetime) -> bool:
         """Check if request can be served and consume tokens."""
